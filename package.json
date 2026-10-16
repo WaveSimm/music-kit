@@ -1,0 +1,35 @@
+{
+  "name": "@wavesimm/music-kit",
+  "version": "0.1.0",
+  "description": "악보·음향·오디오 공용 도구 — 음악이론, 오선 그리기, 오디오 재생",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./theory": "./src/theory/index.ts",
+    "./notation": "./src/notation/index.ts",
+    "./audio": "./src/audio/index.ts",
+    "./react": "./src/react/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^18.3.31",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WaveSimm/music-kit.git"
+  }
+}
