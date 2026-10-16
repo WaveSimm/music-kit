@@ -79,25 +79,35 @@ export class AudioEngine {
     return this.ctx?.currentTime ?? 0;
   }
 
-  /** 첫 터치 전에도 부를 수 있다: 파일만 받아 두고, 디코딩은 unlock 뒤에 */
-  preload(midis: number[]): Promise<void> {
+  /**
+   * 첫 터치 전에도 부를 수 있다: 파일만 받아 두고, 디코딩은 unlock 뒤에.
+   * source를 주면 그 소리로(기본은 엔진 소리), lyrics[i]는 i번째 음의 음절.
+   */
+  preload(midis: number[], opts: { source?: VoiceSource; lyrics?: string[] } = {}): Promise<void> {
+    const source = opts.source ?? this.source;
     if (!this.ctx) {
-      midis.forEach((m) => this.source.prefetch(m));
+      midis.forEach((m, i) => source.prefetch(m, opts.lyrics?.[i]));
       return Promise.resolve();
     }
     const ctx = this.ctx;
-    return Promise.all(midis.map((m) => this.source.load(ctx, m).catch(() => undefined))).then(() => undefined);
+    return Promise.all(midis.map((m, i) => source.load(ctx, m, opts.lyrics?.[i]).catch(() => undefined))).then(() => undefined);
   }
 
-  /** 한 음. when은 AudioContext 시각(생략하면 바로). 샘플이 아직 없으면 받는 대로 울린다. */
-  playNote(midi: number, opts: { when?: number; duration?: number; gain?: number } = {}): Voice {
+  /**
+   * 한 음. when은 AudioContext 시각(생략하면 바로). 샘플이 아직 없으면 받는 대로 울린다.
+   * source를 주면 그 소리로(기본은 엔진 소리), lyric은 노래 소리에서 부를 음절.
+   */
+  playNote(
+    midi: number,
+    opts: { when?: number; duration?: number; gain?: number; source?: VoiceSource; lyric?: string } = {},
+  ): Voice {
     const ctx = this.ensureContext();
     let src: AudioBufferSourceNode | null = null;
     let env: GainNode | null = null;
     let stopped = false;
     const duration = opts.duration ?? 1.5;
 
-    void this.source.load(ctx, midi).then((buffer) => {
+    void (opts.source ?? this.source).load(ctx, midi, opts.lyric).then((buffer) => {
       if (stopped || !this.master) return;
       const start = Math.max(opts.when ?? 0, ctx.currentTime);
       src = ctx.createBufferSource();
@@ -130,21 +140,29 @@ export class AudioEngine {
 
   /**
    * 여러 음을 차례로(seq) 또는 동시에(chord). 샘플을 모두 받은 뒤 정확한 시각에 예약한다.
-   * onNote(i)는 i번째 음이 울릴 때 불린다 (화면 강조용).
+   * onNote(i)는 i번째 음이 울릴 때 불린다 (화면 강조용). source·lyrics는 preload와 같다.
    */
-  playSequence(midis: number[], opts: SequenceOptions & { onNote?: (index: number) => void } = {}): Playback {
+  playSequence(
+    midis: number[],
+    opts: SequenceOptions & { onNote?: (index: number) => void; source?: VoiceSource; lyrics?: string[] } = {},
+  ): Playback {
     const ctx = this.ensureContext();
     const voices: Voice[] = [];
     let cancelled = false;
     let finish: () => void = () => {};
     const done = new Promise<void>((resolve) => (finish = resolve));
 
-    void this.preload(midis).then(() => {
+    void this.preload(midis, { source: opts.source, lyrics: opts.lyrics }).then(() => {
       if (cancelled) return finish();
       const { notes, total } = scheduleSequence(midis, opts);
       const t0 = ctx.currentTime + 0.05;
       for (const n of notes) {
-        voices.push(this.playNote(n.midi, { when: t0 + n.start, duration: n.duration }));
+        voices.push(this.playNote(n.midi, {
+          when: t0 + n.start,
+          duration: n.duration,
+          source: opts.source,
+          lyric: opts.lyrics?.[n.index],
+        }));
         if (opts.onNote) this.later(() => !cancelled && opts.onNote?.(n.index), (t0 + n.start - ctx.currentTime) * 1000);
       }
       this.later(finish, (t0 + total - ctx.currentTime) * 1000);

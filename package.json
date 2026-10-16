@@ -1,6 +1,6 @@
 {
   "name": "@wavesimm/music-kit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "악보·음향·오디오 공용 도구 — 음악이론, 오선 그리기, 오디오 재생",
   "type": "module",
   "sideEffects": false,

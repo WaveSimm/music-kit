@@ -11,7 +11,7 @@
 |---|---|---|
 | `src/theory` | `@wavesimm/music-kit/theory` | 음이름·MIDI·주파수, 조표, 이동도 계명, 음계, 음정·화음 (순수 함수) |
 | `src/notation` | `@wavesimm/music-kit/notation` | 오선 위치 계산, VexFlow 글리프(SVG path), 컴퓨터 키보드 배치 |
-| `src/audio` | `@wavesimm/music-kit/audio` | Web Audio 엔진(싱글턴), Magenta SoundFont 피아노, 재생 시간 계산 |
+| `src/audio` | `@wavesimm/music-kit/audio` | Web Audio 엔진(싱글턴), Magenta SoundFont 피아노, `UrlSampleSource`(음 × 음절 샘플 묶음, 없으면 fallback), 재생 시간 계산 |
 | `src/react` | `@wavesimm/music-kit/react` | `Staff`, `Keyboard`, `useAudioEngine`, `useComputerKeyboard` |
 
 ## 규칙
