@@ -12,11 +12,14 @@
 | `src/theory` | `@wavesimm/music-kit/theory` | 음이름·MIDI·주파수, 조표, 이동도 계명, 음계, 음정·화음 (순수 함수) |
 | `src/notation` | `@wavesimm/music-kit/notation` | 오선 위치 계산, VexFlow 글리프(SVG path), 컴퓨터 키보드 배치 |
 | `src/audio` | `@wavesimm/music-kit/audio` | Web Audio 엔진(싱글턴), Magenta SoundFont 피아노, `UrlSampleSource`(음 × 음절 샘플 묶음, 없으면 fallback), 재생 시간 계산 |
-| `src/react` | `@wavesimm/music-kit/react` | `Staff`, `Keyboard`, `useAudioEngine`, `useComputerKeyboard` |
+| `src/pitch` | `@wavesimm/music-kit/pitch` | 음높이 검출(pitchy, 순수), 판정 `judgeSing`(순수), 마이크 `PitchTracker`(브라우저 전용, 추적 + MediaRecorder 녹음) |
+| `src/react` | `@wavesimm/music-kit/react` | `Staff`, `Keyboard`, `useAudioEngine`, `useComputerKeyboard`, `usePitchTracker` |
 
 ## 규칙
 
 - **빌드 없이 TypeScript 원본을 내보낸다** (`package.json` exports → `.ts`). 쓰는 앱이 컴파일한다: Next.js는 `transpilePackages: ["@wavesimm/music-kit"]`.
+- **pitchy는 peerDependency** (+ 테스트용 devDependency). 쓰는 앱이 설치한다 — 형제 폴더 링크·태그 clone 배포에서 이 저장소의 node_modules는 없기 때문.
+- 마이크: 엔진과 같은 AudioContext를 쓴다(프레임 시각 = 재생 예약 시각). 마이크를 여는 동안 `engine.setCapturing(true)` — iOS 오디오 세션을 `play-and-record`로.
 - **React는 peerDependency만.** 이 저장소에 react 런타임을 설치하지 말 것 (쓰는 앱과 React가 두 벌이 되어 hooks가 깨진다). 타입은 `@types/react`.
 - **Tailwind를 쓰지 않는다.** 컴포넌트는 SVG 속성·인라인 스타일·`currentColor`로 그리고 `className`을 받는다.
 - 한국어 표기: 음이름은 영문(C#, Bb), 계명은 도·레·미·파·솔·라·**티**, 반음계 올림 디·리·피·시·리 / 내림 라·메·세·레·테, 단조는 라부터. 한글이 겹치는 음절(ra/la, ri/li, re/le)은 영문 id로 구분.

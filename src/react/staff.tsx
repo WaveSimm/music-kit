@@ -15,6 +15,8 @@ export interface StaffNote {
   /** 음표 아래 둘째 줄 (예: 계명 "피") */
   sub?: string;
   highlight?: boolean;
+  /** 이 음표만의 색 (예: 판정 결과). highlight가 우선 */
+  color?: string;
 }
 
 export interface StaffProps {
@@ -157,7 +159,7 @@ export function Staff({
       {notes.map((n, i) => {
         const step = staffStep(n.pitch, clef);
         const cx = notesX + (chord ? 0 : i) * SLOT + SLOT / 2 + (chord ? chordOffsets.get(i) ?? 0 : 0);
-        const color = n.highlight ? highlightColor : undefined;
+        const color = n.highlight ? highlightColor : n.color;
         return (
           <g key={i}>
             {drawNote(`n${i}`, step, cx, n.pitch, color)}

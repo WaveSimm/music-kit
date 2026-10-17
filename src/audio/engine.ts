@@ -24,6 +24,7 @@ export class AudioEngine {
   private timers = new Set<ReturnType<typeof setTimeout>>();
   private listeners = new Set<(s: EngineStatus) => void>();
   private _status: EngineStatus = "locked";
+  private capturing = false;
   source: VoiceSource;
 
   constructor(source: VoiceSource = new SoundFontSource()) {
@@ -60,12 +61,33 @@ export class AudioEngine {
     return ctx;
   }
 
+  /** 엔진의 AudioContext (없으면 만든다). 마이크 입력처럼 같은 시계를 써야 하는 곳에서 쓴다. */
+  audioContext(): AudioContext {
+    return this.ensureContext();
+  }
+
+  // iOS 17+ 오디오 세션: 평소에는 무음 스위치가 켜져 있어도 소리가 나도록 "playback",
+  // 마이크를 쓰는 동안에는 "play-and-record" (지원하는 브라우저만)
+  private applySession() {
+    const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession;
+    const type = this.capturing ? "play-and-record" : "playback";
+    if (session && session.type !== type) session.type = type;
+  }
+
+  /** 마이크를 열기 전에 true, 닫은 뒤 false */
+  setCapturing(on: boolean): void {
+    this.capturing = on;
+    try {
+      this.applySession();
+    } catch (e) {
+      console.warn("[music-kit/audio]", e);
+    }
+  }
+
   /** 사용자 터치·클릭 핸들러 안에서 부른다. 두 번째부터는 아무 일도 하지 않는다. */
   async unlock(): Promise<void> {
     try {
-      // iOS 17+: 무음 스위치가 켜져 있어도 소리가 나도록 (지원하는 브라우저만)
-      const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession;
-      if (session && session.type !== "playback") session.type = "playback";
+      this.applySession();
       const ctx = this.ensureContext();
       if (ctx.state !== "running") await ctx.resume();
       this.setStatus(ctx.state === "running" ? "running" : "locked");
@@ -216,6 +238,23 @@ export class AudioEngine {
         });
       },
     };
+  }
+
+  /** 박자 소리 (짧은 딸깍). accent면 더 높고 크게 — 셈 들어가기·메트로놈용 */
+  playClick(when?: number, opts: { accent?: boolean; gain?: number } = {}): void {
+    const ctx = this.ensureContext();
+    const t = Math.max(when ?? 0, ctx.currentTime);
+    const osc = ctx.createOscillator();
+    osc.frequency.value = opts.accent ? 1760 : 1320;
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0, t);
+    env.gain.linearRampToValueAtTime(opts.gain ?? (opts.accent ? 0.5 : 0.35), t + 0.002);
+    env.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+    osc.connect(env).connect(this.master!);
+    osc.start(t);
+    osc.stop(t + 0.08);
+    this.active.add(osc);
+    osc.onended = () => this.active.delete(osc);
   }
 
   /** 울리는 소리와 예약을 모두 멈춘다 */

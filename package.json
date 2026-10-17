@@ -1,21 +1,23 @@
 {
   "name": "@wavesimm/music-kit",
-  "version": "0.2.0",
-  "description": "악보·음향·오디오 공용 도구 — 음악이론, 오선 그리기, 오디오 재생",
+  "version": "0.3.0",
+  "description": "악보·음향·오디오 공용 도구 — 음악이론, 오선 그리기, 오디오 재생, 음높이 검출",
   "type": "module",
   "sideEffects": false,
   "exports": {
     "./theory": "./src/theory/index.ts",
     "./notation": "./src/notation/index.ts",
     "./audio": "./src/audio/index.ts",
-    "./react": "./src/react/index.ts"
+    "./react": "./src/react/index.ts",
+    "./pitch": "./src/pitch/index.ts"
   },
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "react": ">=18"
+    "react": ">=18",
+    "pitchy": "^4.1.0"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -25,6 +27,7 @@
   "devDependencies": {
     "@types/node": "^24.19.2",
     "@types/react": "^18.3.31",
+    "pitchy": "^4.1.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7"
   },

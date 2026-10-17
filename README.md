@@ -1,6 +1,6 @@
 # @wavesimm/music-kit
 
-악보·음향·오디오 공용 도구 (TypeScript). 음악이론 계산, 오선 그리기, 피아노 소리 재생, React 오선·건반 컴포넌트.
+악보·음향·오디오 공용 도구 (TypeScript). 음악이론 계산, 오선 그리기, 피아노 소리 재생, 마이크 음높이 검출·판정, React 오선·건반 컴포넌트.
 한국어 사용자를 위한 표기(이동도 계명, 한국어 음정·화음 이름)를 기본으로 한다.
 
 ```ts
@@ -21,7 +21,8 @@ chordType(["E4", "G4", "C5"])?.label;     // "C 장3화음 1전위"
 | `@wavesimm/music-kit/theory` | 음이름·MIDI·주파수, 조표, 이동도 계명, 음계, 음정·화음, 음역에 맞춘 옥타브 (순수 함수) |
 | `@wavesimm/music-kit/notation` | 오선 위치 계산, 악보 글리프(SVG path), 컴퓨터 키보드 배치 |
 | `@wavesimm/music-kit/audio` | Web Audio 엔진, SoundFont 피아노 샘플, URL 규칙 샘플 묶음(음절별 노래 소리 등), 재생 시간 계산 |
-| `@wavesimm/music-kit/react` | `Staff`, `Keyboard`, `useAudioEngine`, `useComputerKeyboard` |
+| `@wavesimm/music-kit/pitch` | 음높이 검출(McLeod, [pitchy](https://github.com/ianprime0509/pitchy)), 마이크 추적·녹음 `PitchTracker`, 부른 음 판정 `judgeSing` (순수 함수) |
+| `@wavesimm/music-kit/react` | `Staff`, `Keyboard`, `useAudioEngine`, `useComputerKeyboard`, `usePitchTracker` |
 
 ## 쓰는 법
 
@@ -29,6 +30,8 @@ chordType(["E4", "G4", "C5"])?.label;     // "C 장3화음 1전위"
 
 - Next.js: `transpilePackages: ["@wavesimm/music-kit"]`
 - React는 peer dependency (`>=18`). Tailwind 등 CSS 설정은 필요 없다.
+- `pitchy`(^4.1)도 peer dependency — 쓰는 앱이 설치한다 (`pitch`, `usePitchTracker`가 쓴다).
+- 마이크는 https(또는 localhost)에서만 열린다. `usePitchTracker().start()`는 터치·클릭 핸들러 안에서 부른다.
 
 ## 개발
 
