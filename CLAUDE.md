@@ -10,10 +10,10 @@
 | 경로 | import | 내용 |
 |---|---|---|
 | `src/theory` | `@wavesimm/music-kit/theory` | 음이름·MIDI·주파수, 조표, 이동도 계명, 음계, 음정·화음 (순수 함수) |
-| `src/notation` | `@wavesimm/music-kit/notation` | 오선 위치 계산, VexFlow 글리프(SVG path), 컴퓨터 키보드 배치 |
+| `src/notation` | `@wavesimm/music-kit/notation` | 오선 위치 계산, VexFlow 글리프(SVG path), 컴퓨터 키보드 배치, 악보 진행 순서 `playbackOrder`(도돌이표·괄호·D.C./D.S.·Fine·코다, 순수) |
 | `src/audio` | `@wavesimm/music-kit/audio` | Web Audio 엔진(싱글턴), Magenta SoundFont 피아노, `UrlSampleSource`(음 × 음절 샘플 묶음, 없으면 fallback), 재생 시간 계산 |
 | `src/pitch` | `@wavesimm/music-kit/pitch` | 음높이 검출(pitchy, 순수), 판정 `judgeSing`(순수), 마이크 `PitchTracker`(브라우저 전용, 추적 + MediaRecorder 녹음) |
-| `src/react` | `@wavesimm/music-kit/react` | `Staff`, `Keyboard`, `useAudioEngine`, `useComputerKeyboard`, `usePitchTracker` |
+| `src/react` | `@wavesimm/music-kit/react` | `Staff`, `MeasureScore`(마디·세로줄·도돌이표·괄호·세뇨·코다가 있는 한 단 악보, 마디 누르기), `Keyboard`, `useAudioEngine`, `useComputerKeyboard`, `usePitchTracker` |
 
 ## 규칙
 

@@ -19,10 +19,10 @@ chordType(["E4", "G4", "C5"])?.label;     // "C 장3화음 1전위"
 | import | 내용 |
 |---|---|
 | `@wavesimm/music-kit/theory` | 음이름·MIDI·주파수, 조표, 이동도 계명, 음계, 음정·화음, 음역에 맞춘 옥타브 (순수 함수) |
-| `@wavesimm/music-kit/notation` | 오선 위치 계산, 악보 글리프(SVG path), 컴퓨터 키보드 배치 |
+| `@wavesimm/music-kit/notation` | 오선 위치 계산, 악보 글리프(SVG path), 컴퓨터 키보드 배치, 악보 진행 순서(`playbackOrder`: 도돌이표·괄호·D.C./D.S.·Fine·코다) |
 | `@wavesimm/music-kit/audio` | Web Audio 엔진, SoundFont 피아노 샘플, URL 규칙 샘플 묶음(음절별 노래 소리 등), 재생 시간 계산 |
 | `@wavesimm/music-kit/pitch` | 음높이 검출(McLeod, [pitchy](https://github.com/ianprime0509/pitchy)), 마이크 추적·녹음 `PitchTracker`, 부른 음 판정 `judgeSing` (순수 함수) |
-| `@wavesimm/music-kit/react` | `Staff`, `Keyboard`, `useAudioEngine`, `useComputerKeyboard`, `usePitchTracker` |
+| `@wavesimm/music-kit/react` | `Staff`, `MeasureScore`, `Keyboard`, `useAudioEngine`, `useComputerKeyboard`, `usePitchTracker` |
 
 ## 쓰는 법
 
